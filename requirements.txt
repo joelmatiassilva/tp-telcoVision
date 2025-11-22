@@ -1,0 +1,12 @@
+pycaret
+pandas
+PyYAML
+dvc
+xgboost
+mlflow==2.9.2
+python-dotenv
+matplotlib
+seaborn
+fastapi
+uvicorn
+mangum

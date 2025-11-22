@@ -1,0 +1,11 @@
+# conda.yaml
+name: pycaret-env
+dependencies:
+  - python=3.9
+  - pandas
+  - numpy
+  - pip
+  - pip:
+    - pycaret[full]
+    - dvc[gs]
+    - dagshub

@@ -1,0 +1,104 @@
+name: TelcoVision CI/CD
+
+on:
+  push:
+    branches: [ "main", "deploy" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-evaluate:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.9"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Configure DVC Remote
+      run: |
+        dvc remote modify origin --local auth basic
+        dvc remote modify origin --local user ${{ secrets.DAGSHUB_USER }}
+        dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
+
+    - name: Pull Data from DVC
+      run: dvc pull
+
+    - name: Run DVC Pipeline
+      env:
+        MLFLOW_TRACKING_URI: https://dagshub.com/${{ secrets.DAGSHUB_USER }}/tp-labMineriaDeDatos-telco.mlflow
+        MLFLOW_TRACKING_USERNAME: ${{ secrets.DAGSHUB_USER }}
+        MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+        # Forzar tracking remoto aunque params.yaml diga false
+        TRACK_TO_DAGSHUB: "true" 
+      run: dvc repro
+
+    - name: Show Metrics
+      run: |
+        echo "## Metrics" >> $GITHUB_STEP_SUMMARY
+        dvc metrics show >> $GITHUB_STEP_SUMMARY
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/deploy'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.9"
+
+    - name: Install dependencies for check
+      run: pip install mlflow python-dotenv
+
+    - name: Verify Model in MLflow
+      env:
+        MLFLOW_TRACKING_URI: https://dagshub.com/${{ secrets.DAGSHUB_USER }}/tp-labMineriaDeDatos-telco.mlflow
+        MLFLOW_TRACKING_USERNAME: ${{ secrets.DAGSHUB_USER }}
+        MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+        MLFLOW_MODEL_NAME: "telco-churn-prediction"
+        MLFLOW_MODEL_STAGE: "Production"
+      run: python src/check_model.py
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    - name: Update Lambda Function
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+        IMAGE_TAG: ${{ github.sha }}
+        LAMBDA_FUNCTION_NAME: ${{ secrets.LAMBDA_FUNCTION_NAME }}
+      run: |
+        aws lambda update-function-code \
+          --function-name $LAMBDA_FUNCTION_NAME \
+          --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG

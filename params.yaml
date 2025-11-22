@@ -1,0 +1,15 @@
+# Parámetros de entrenamiento
+train_size: 0.8
+seed: 42
+metric: 'Accuracy'
+
+# Modelos a comparar (empezar simple)
+models_to_compare: ['lr', 'rf', 'xgboost', 'nb', 'svm']
+
+# Métricas objetivo
+target_metric: 0.95
+
+# MLflow configuration
+track_to_dagshub: false
+dagshub_tracking_uri: "https://dagshub.com/joelmatiassilva/tp-labMineriaDeDatos-telco.mlflow"
+data_read_csv: 'data/processed/telco_churn_processed.csv'

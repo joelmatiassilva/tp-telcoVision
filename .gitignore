@@ -1,0 +1,21 @@
+# DVC
+.dvc/cache
+.dvc/tmp
+
+# Data, models, and outputs managed by DVC
+/data/processed/
+/data/raw/telco_churn.csv
+/models/
+/outputs/
+
+# Environment
+.env
+*.env
+.venv
+
+# MLflow local runs
+/mlruns
+
+# Logs
+logs/
+logs.log
