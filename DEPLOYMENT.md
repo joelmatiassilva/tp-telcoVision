@@ -34,20 +34,51 @@ El pipeline incluye un paso de seguridad (`src/check_model.py`) que se ejecuta a
 
 ## API REST con FastAPI
 
-La aplicación se expone mediante FastAPI en `src/app.py`.
+La aplicación se expone mediante FastAPI en `src/api/app.py`.
 
-### Ejecución Local
+### Prueba Local del Modelo
 
-1.  Asegúrate de tener las variables de entorno configuradas (especialmente `MLFLOW_TRACKING_URI`).
-2.  Ejecuta el servidor:
+Antes de ejecutar la API, verifica que el modelo se puede cargar desde DagsHub:
 
 ```bash
-python src/app.py
-# O usando uvicorn directamente
-uvicorn src.app:app --reload
+python test_model_loading.py
 ```
 
-3.  Accede a la documentación interactiva en: `http://localhost:8000/docs`
+Este script te confirmará si:
+- El modelo existe en MLflow
+- Está en stage `Production`
+- Se puede descargar correctamente
+- Puede hacer predicciones
+
+### Ejecución Local de la API
+
+**Opción 1: Script automatizado (Recomendado)**
+
+```bash
+./run_api.sh
+```
+
+**Opción 2: Manual**
+
+```bash
+conda activate pycaret-env
+python -c "
+import sys
+sys.path.insert(0, '.')
+from src.api.app import app
+import uvicorn
+uvicorn.run(app, host='0.0.0.0', port=8000)
+"
+```
+
+Accede a la documentación interactiva en: `http://localhost:8000/docs`
+
+### Endpoints Disponibles
+
+- `GET /` - Health check básico con información del modelo
+- `GET /health` - Health check detallado (estado del modelo)
+- `POST /predict` - Predicción de churn
+- `GET /docs` - Documentación interactiva Swagger UI
 
 ### Configuración del Modelo
 

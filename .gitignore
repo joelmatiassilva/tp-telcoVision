@@ -19,3 +19,4 @@
 # Logs
 logs/
 logs.log
+__pycache__

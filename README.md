@@ -68,16 +68,47 @@ telco_prod/
 ├── .github/workflows/  # CI/CD: Separado en jobs build (main) y deploy (deploy)
 ├── data/               # Datos gestionados por DVC
 ├── src/
-│   ├── app.py          # API FastAPI (Entrypoint Lambda)
+│   ├── api/
+│   │   └── app.py      # API FastAPI (Entrypoint Lambda)
 │   ├── check_model.py  # Script de verificación pre-deploy
 │   ├── train.py        # Script de entrenamiento
 │   ├── evaluate.py     # Evaluación y generación de métricas
 │   └── data_prep.py    # Preparación de datos
+├── test_model_loading.py  # Script de prueba local del modelo
+├── run_api.sh          # Script para ejecutar API localmente
 ├── Dockerfile          # Definición de la imagen para Lambda
 ├── dvc.yaml            # Pipeline reproducible (Data Prep -> Train -> Eval)
 ├── params.yaml         # Hiperparámetros globales
 └── requirements.txt    # Dependencias del proyecto
 ```
+
+## 🧪 Pruebas Locales
+
+### Verificar Carga del Modelo
+
+Antes de desplegar, puedes verificar que el modelo se puede cargar desde DagsHub:
+
+```bash
+python test_model_loading.py
+```
+
+Este script:
+- Conecta a MLflow en DagsHub
+- Descarga el modelo en stage `Production`
+- Ejecuta una predicción de prueba
+- Verifica que todo funcione correctamente
+
+### Ejecutar API Localmente
+
+```bash
+./run_api.sh
+```
+
+La API estará disponible en `http://localhost:8000` con los siguientes endpoints:
+- `GET /` - Health check básico
+- `GET /health` - Health check detallado
+- `POST /predict` - Predicción de churn
+- `GET /docs` - Documentación interactiva (Swagger UI)
 
 ## ☁️ Configuración de Secretos
 
