@@ -63,3 +63,21 @@ Para probar la imagen exactamente como correrá en Lambda (usando el emulador RI
 docker build -t telco-api .
 # Nota: La imagen de Lambda no se ejecuta directamente como un servidor web normal localmente sin el Runtime Interface Emulator.
 ```
+
+## Troubleshooting
+
+### Error: "Missing cache files" en GitHub Actions
+
+Si el CI falla con `ERROR: failed to pull data from the cloud - Checkout failed`, verifica:
+
+1.  **Secretos de GitHub**: Asegúrate de que `DAGSHUB_USER` y `DAGSHUB_TOKEN` estén configurados correctamente en **Settings > Secrets and variables > Actions**.
+2.  **Permisos en DagsHub**: El token debe tener permisos de lectura en el repositorio de datos.
+3.  **Debug**: El workflow incluye un paso "Debug Secrets" que mostrará si los secretos están vacíos (sin revelar su valor).
+
+### Error: "Verify Model" falla en deploy
+
+Si el job de `deploy` falla en la verificación del modelo:
+
+1.  Asegúrate de que el job `build-and-evaluate` en la rama `main` haya corrido exitosamente.
+2.  Verifica en [DagsHub/MLflow](https://dagshub.com/joelmatiassilva/tp-labMineriaDeDatos-telco/experiments) que exista un modelo registrado.
+3.  Si el modelo existe pero no está en stage `Production`, promuévelo manualmente en la UI de MLflow.

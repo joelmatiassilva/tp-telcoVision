@@ -49,6 +49,7 @@ def load_model():
         print("ADVERTENCIA: La API iniciará pero las predicciones fallarán hasta que se cargue un modelo válido.")
 
 class CustomerData(BaseModel):
+    customer_id: str
     age: int
     gender: str
     region: str
@@ -64,6 +65,7 @@ class CustomerData(BaseModel):
     class Config:
         schema_extra = {
             "example": {
+                "customer_id": "CUST-12345",
                 "age": 30,
                 "gender": "Female",
                 "region": "West",

@@ -31,9 +31,26 @@ Implementación en `.github/workflows/ci.yaml` (Rama `deploy`):
 -   **Entrenamiento**: PyCaret (AutoML).
 -   **Tracking & Registry**: MLflow + DagsHub.
 -   **Versionado de Datos**: DVC (Data Version Control).
+-   **Métricas**: Estrategia híbrida DVC + MLflow.
 -   **API**: FastAPI + Mangum (adaptador serverless).
 -   **Infraestructura**: AWS Lambda (Docker Image) + Amazon ECR.
 -   **CI/CD**: GitHub Actions.
+
+### Estrategia de Métricas (Híbrida)
+
+El proyecto utiliza **ambos** sistemas de métricas para obtener lo mejor de cada uno:
+
+1.  **DVC Metrics** (`outputs/metrics/metrics.json`):
+    *   Métricas básicas en formato JSON versionado.
+    *   Visible en terminal con `dvc metrics show`.
+    *   Mostrado automáticamente en el resumen de GitHub Actions.
+    *   Ideal para comparaciones rápidas entre ramas (`dvc metrics diff`).
+
+2.  **MLflow**:
+    *   Métricas detalladas + gráficos (ROC, Confusion Matrix).
+    *   Histórico completo de experimentos.
+    *   Registro de modelos con versionado.
+    *   Accesible vía web en [DagsHub](https://dagshub.com/joelmatiassilva/tp-labMineriaDeDatos-telco/experiments).
 
 ### Flujo de Trabajo Recomendado
 1.  **Desarrollo (`main`)**:
