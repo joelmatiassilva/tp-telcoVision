@@ -60,7 +60,7 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "### Ver Detalles Completos" >> $GITHUB_STEP_SUMMARY
         echo "Las métricas detalladas, gráficos (ROC, Confusion Matrix) y modelos están en MLflow:" >> $GITHUB_STEP_SUMMARY
-        echo "👉 [Ver Experimento en DagsHub](https://dagshub.com/joelmatiassilva/tp-labMineriaDeDatos-telco/experiments)" >> $GITHUB_STEP_SUMMARY
+        echo "[Ver Experimento en DagsHub](https://dagshub.com/joelmatiassilva/tp-labMineriaDeDatos-telco/experiments)" >> $GITHUB_STEP_SUMMARY
 
   deploy:
     runs-on: ubuntu-latest
