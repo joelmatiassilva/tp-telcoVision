@@ -147,6 +147,14 @@ def evaluate_model():
             mlflow.log_artifact(roc_path)
 
     print("Métricas y gráficos de evaluación final logueados en el run de MLflow existente.")
+    
+    # --- Guardar métricas también en formato JSON para DVC ---
+    import json
+    os.makedirs("outputs/metrics", exist_ok=True)
+    with open("outputs/metrics/metrics.json", "w") as f:
+        json.dump(metrics, f, indent=2)
+    
+    print("Métricas guardadas también en outputs/metrics/metrics.json para DVC")
 
 if __name__ == "__main__":
     evaluate_model()

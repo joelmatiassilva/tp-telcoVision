@@ -19,3 +19,6 @@ stages:
     deps:
     - src/evaluate.py
     - data/processed/telco_churn_processed.csv
+    metrics:
+    - outputs/metrics/metrics.json:
+        cache: false
