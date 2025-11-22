@@ -24,11 +24,23 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Debug Secrets
+      run: |
+        echo "Checking secrets..."
+        if [ -z "${{ secrets.DAGSHUB_USER }}" ]; then echo "DAGSHUB_USER is empty"; else echo "DAGSHUB_USER is set (length: ${#DAGSHUB_USER})"; fi
+        if [ -z "${{ secrets.DAGSHUB_TOKEN }}" ]; then echo "DAGSHUB_TOKEN is empty"; else echo "DAGSHUB_TOKEN is set"; fi
+
     - name: Configure DVC Remote
       run: |
         dvc remote modify origin --local auth basic
         dvc remote modify origin --local user "${{ secrets.DAGSHUB_USER }}"
         dvc remote modify origin --local password "${{ secrets.DAGSHUB_TOKEN }}"
+        dvc config --local --list
+
+    - name: Check DVC Connectivity
+      run: |
+        # Intentar listar archivos en el remoto para verificar acceso
+        dvc remote list origin || echo "Failed to list remote"
 
     - name: Pull Data from DVC
       run: dvc pull
