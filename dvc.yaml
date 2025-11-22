@@ -19,6 +19,3 @@ stages:
     deps:
     - src/evaluate.py
     - data/processed/telco_churn_processed.csv
-    outs:
-    - outputs/plots/confusion_matrix.png
-    - outputs/plots/roc_curve.png

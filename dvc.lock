@@ -17,7 +17,7 @@ stages:
       md5: 006527876bfe18c977d74eb4bc59443f
       size: 873370
   train:
-    cmd: conda run -n pycaret-env python src/train.py
+    cmd: python src/train.py
     deps:
     - path: data/processed/telco_churn_processed.csv
       hash: md5
@@ -25,14 +25,14 @@ stages:
       size: 873370
     - path: params.yaml
       hash: md5
-      md5: fafff4cfdca5a5fc09c1f42e4426a2a9
-      size: 354
+      md5: f15db0fc0f1f55fca6d6a83acdb3d291
+      size: 411
     - path: src/train.py
       hash: md5
-      md5: 1b820eeae07e9576ec59f77694acc842
-      size: 1934
+      md5: 709b040fbbc52abcbd55e02c968649fd
+      size: 2211
   evaluate:
-    cmd: conda run -n pycaret-env python src/evaluate.py
+    cmd: python src/evaluate.py
     deps:
     - path: data/processed/telco_churn_processed.csv
       hash: md5
@@ -40,5 +40,5 @@ stages:
       size: 873370
     - path: src/evaluate.py
       hash: md5
-      md5: 235b7a7bfbe1e6c8750b2973f95cf539
-      size: 3020
+      md5: 5df4b2a8fc4091c95924f5e28410ba61
+      size: 6100
