@@ -13,5 +13,5 @@ COPY src/ ${LAMBDA_TASK_ROOT}/src/
 COPY params.yaml ${LAMBDA_TASK_ROOT}
 
 # Configurar el CMD para el handler de Mangum
-# src.app.handler apunta al objeto Mangum(app) en src/app.py
-CMD [ "src.app.handler" ]
+# src.api.app.handler apunta al objeto Mangum(app) en src/api/app.py
+CMD [ "src.api.app.handler" ]
