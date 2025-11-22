@@ -37,11 +37,6 @@ jobs:
         dvc remote modify origin --local password "${{ secrets.DAGSHUB_TOKEN }}"
         dvc config --local --list
 
-    - name: Check DVC Connectivity
-      run: |
-        # Intentar listar archivos en el remoto para verificar acceso
-        dvc remote list origin || echo "Failed to list remote"
-
     - name: Pull Data from DVC
       run: dvc pull
 
@@ -56,8 +51,9 @@ jobs:
 
     - name: Show Metrics
       run: |
-        echo "## Metrics" >> $GITHUB_STEP_SUMMARY
-        dvc metrics show >> $GITHUB_STEP_SUMMARY
+        echo "## Metrics & Artifacts" >> $GITHUB_STEP_SUMMARY
+        echo "Las métricas detalladas y los gráficos (ROC, Confusion Matrix) se han subido a MLflow." >> $GITHUB_STEP_SUMMARY
+        echo "👉 [Ver Experimento en DagsHub](https://dagshub.com/${{ secrets.DAGSHUB_USER }}/tp-labMineriaDeDatos-telco/experiments)" >> $GITHUB_STEP_SUMMARY
 
   deploy:
     runs-on: ubuntu-latest
