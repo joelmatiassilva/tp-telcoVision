@@ -4,7 +4,7 @@ seed: 42
 metric: 'Accuracy'
 
 # Modelos a comparar (empezar simple)
-models_to_compare: ['lr', 'rf', 'xgboost', 'nb', 'svm']
+models_to_compare: ['lr', 'rf', 'xgboost', 'nb', 'svm', 'knn']
 
 # Métricas objetivo
 target_metric: 0.95
