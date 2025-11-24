@@ -22,3 +22,8 @@ stages:
     metrics:
     - outputs/metrics/metrics.json:
         cache: false
+
+  promote_model:
+    cmd: python src/promote_best_model.py
+    deps:
+    - src/promote_best_model.py
